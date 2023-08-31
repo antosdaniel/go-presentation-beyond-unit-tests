@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+./migrate -path migrations -database "$DB_URL" up
+
+# Seeds
+#psql "$DB_URL" -f seeds/payrolls.sql

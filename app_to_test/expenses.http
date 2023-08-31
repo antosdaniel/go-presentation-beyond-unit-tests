@@ -1,0 +1,17 @@
+POST http://localhost:8000/expenses/add
+Content-Type: application/json
+
+{
+  "id": "{{$random.uuid}}",
+  "amount": {{$random.integer}},
+  "category":  "Shopping",
+  "date": "2023-08-10",
+  "notes":  "Shopping spree"
+}
+
+###
+
+GET http://localhost:8000/expenses/all
+Accept: application/json
+
+###
