@@ -1,0 +1,22 @@
+INSERT INTO expenses (id, amount, category, date, notes)
+VALUES
+    ('7cf2f3e1-1285-4c2a-9d25-30c67ad37008', 50.0, 'Groceries', '2023-06-01', 'Monthly grocery shopping'),
+    ('b2c130d0-efda-46f9-a9d5-69a8fb79d6e2', 25.0, 'Dining', '2023-06-02', 'Lunch with friends'),
+    ('cb6c33f9-754a-4c42-b128-781cd3e4a0e2', 15.0, 'Transportation', '2023-06-03', 'Bus fare'),
+    ('d0e34759-687f-4cd3-a9eb-aa72f00e439a', 40.0, 'Shopping', '2023-06-04', 'Clothing shopping'),
+    ('c5d0e8b1-b1d9-4511-8902-660846e12419', 80.0, 'Groceries', '2023-06-05', 'Weekly grocery shopping'),
+    ('aa07f3a4-066a-4b4f-8821-cc63d30ed0e5', 10.0, 'Entertainment', '2023-06-06', 'Movie ticket'),
+    ('23d724eb-5a3b-4c96-971c-0bb1a116b9de', 35.0, 'Dining', '2023-06-07', 'Dinner with family'),
+    ('b66d4bbf-4a7a-40f0-b12f-2c75b5212e6c', 20.0, 'Transportation', '2023-06-08', 'Taxi fare'),
+    ('cda6bf0d-af7e-4e60-b9b3-b1b94d1d361d', 60.0, 'Groceries', '2023-06-09', 'Stocking up on groceries'),
+    ('6c01b68c-4c12-44ef-84bf-c05a76d88ac0', 15.0, 'Entertainment', '2023-06-10', 'Concert ticket'),
+    ('d7e92f05-4e61-4e27-943a-7e0eecd13ee3', 30.0, 'Shopping', '2023-06-11', 'Online shopping'),
+    ('332dd65f-b7e7-4c67-a11d-7d7e4c7d11f3', 40.0, 'Dining', '2023-06-12', 'Brunch with friends'),
+    ('9eaff6b7-e3f7-4f69-8396-9c4f1d26845d', 10.0, 'Transportation', '2023-06-13', 'Subway fare'),
+    ('6c411c46-61f4-443f-84d7-7f987974c307', 25.0, 'Groceries', '2023-06-14', 'Weekly grocery shopping'),
+    ('bfd1f593-cf09-45cd-a15c-7e1b3ac38ca0', 50.0, 'Shopping', '2023-06-15', 'Electronics purchase'),
+    ('a96d6e5e-4ca9-4b2e-b1d4-81d973390903', 20.0, 'Entertainment', '2023-06-16', 'Movie night'),
+    ('727c3a7f-81b1-4347-b82f-9c0bea00b279', 30.0, 'Dining', '2023-06-17', 'Dinner date'),
+    ('53922f23-70a5-4d8b-9703-89a31ebd38b1', 15.0, 'Transportation', '2023-06-18', 'Bus fare'),
+    ('9d6be570-8a95-4bb5-85ef-bb4e197ea9dd', 70.0, 'Groceries', '2023-06-19', 'Monthly grocery shopping'),
+    ('35c68803-92d4-4ce4-9dcd-cc86a63edf3c', 10.0, 'Entertainment', '2023-06-20', 'Streaming subscription');
