@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  db:
+    image: "postgres:15.2-alpine"
+    environment:
+      POSTGRES_DB: expense_tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret123
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+      interval: 3s
+      timeout: 60s
+      retries: 10
+      start_period: 5s
+    ports:
+      # Random port to avoid collision. Helpful in CI!
+      - "5432"
+
+  migrate:
+    build:
+      context: ../app_to_test/db
+    environment:
+      DB_URL: "postgres://postgres:secret123@db:5432/expense_tracker?sslmode=disable"
+    depends_on:
+      db:
+        condition: service_healthy

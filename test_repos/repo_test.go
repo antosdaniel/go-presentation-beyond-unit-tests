@@ -12,12 +12,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// This would usually live next to repo it is testing
+// These tests would usually live next to repo it is testing. It's in a separate package to suit the presentation.
 
 func TestExpenseRepo_Add(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
+	// Magic happens inside `StartDB` 🪄
 	db := StartDB(t, ctx).DB
 	expenseRepo := api.NewExpenseRepo(db)
 

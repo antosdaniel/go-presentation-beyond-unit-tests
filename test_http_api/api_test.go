@@ -1,4 +1,4 @@
-package test_rest_api
+package test_http_api
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"testing"
 	"time"
@@ -22,7 +23,13 @@ func TestAPI(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
+	// Thanks to the usage of `t.Cleanup` and `require.NoError`, our setup is short, but doesn't hide any errors.
 	server := startServer(t, ctx)
+
+	// Take a look at `getRequest()`, `call()` and `getExpectedResponse()` functions. They also do not require any error
+	// handling, nor cleanup. Additionally, we are using test name to load the correct file. This way we can ensure
+	// that test name and file name do not drift apart.
+	// You could move these helper to separate package, and share them among tests.
 
 	t.Run("summarize expenses", func(t *testing.T) {
 		// Notice that if we moved this test after add expense test, this test would fail.
@@ -31,6 +38,7 @@ func TestAPI(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, response.StatusCode, "status code")
 		expected := getExpectedResponse(t)
+		// If your response contains unpredictable fields, you can use https://github.com/kinbiko/jsonassert instead.
 		assert.JSONEq(t, expected, responseBody, "response body")
 	})
 	t.Run("add expense successfully", func(t *testing.T) {
@@ -52,7 +60,8 @@ func startServer(t *testing.T, ctx context.Context) *httptest.Server {
 	t.Helper()
 
 	dbContainer := test_repos.StartDB(t, ctx)
-	require.NoError(t, os.Setenv("DB_URL", dbContainer.DSN), "set DB_URL env var")
+	err := os.Setenv("DB_URL", dbContainer.DSN)
+	require.NoError(t, err, "set DB_URL env var")
 
 	setup, err := api.NewSetup()
 	require.NoError(t, err, "new setup")
@@ -72,7 +81,9 @@ func call(t *testing.T, server *httptest.Server, method, path, body string) (*ht
 	if body != "" {
 		b = bytes.NewBuffer([]byte(body))
 	}
-	request, err := http.NewRequest(method, server.URL+path, b)
+	u, err := url.JoinPath(server.URL, path)
+	require.NoError(t, err, "join url path")
+	request, err := http.NewRequest(method, u, b)
 	require.NoError(t, err, "new request")
 
 	response, err := server.Client().Do(request)
