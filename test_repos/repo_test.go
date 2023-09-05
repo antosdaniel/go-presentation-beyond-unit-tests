@@ -1,4 +1,4 @@
-package test_against_database
+package test_repos
 
 import (
 	"context"
