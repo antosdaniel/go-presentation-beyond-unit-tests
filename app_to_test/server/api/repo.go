@@ -23,7 +23,10 @@ func (r *ExpenseRepo) Add(expense Expense) error {
 }
 
 func (r *ExpenseRepo) All() ([]Expense, error) {
-	rows, err := r.db.Query("SELECT id, amount, category, date, notes FROM expenses")
+	rows, err := r.db.Query(`
+		SELECT id, amount, category, date, notes 
+		FROM expenses
+	`)
 	if err != nil {
 		return nil, err
 	}

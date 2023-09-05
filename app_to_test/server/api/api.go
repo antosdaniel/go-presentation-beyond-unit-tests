@@ -18,7 +18,15 @@ func addExpenseHandler(expenseRepo *ExpenseRepo) http.HandlerFunc {
 		var expense Expense
 		err := json.NewDecoder(r.Body).Decode(&expense)
 		if err != nil {
+			slog.With(slog.String("error", err.Error())).Warn("invalid request body")
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"error": "invalid request body"}`))
+			return
+		}
+
+		if expense.Category == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(`{"error": "category is required"}`))
 			return
 		}
 

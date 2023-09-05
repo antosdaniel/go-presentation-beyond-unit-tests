@@ -1,0 +1,32 @@
+[
+  {
+    "year": 2023,
+    "month": 6,
+    "category": "Dining",
+    "total_amount": 130
+  },
+  {
+    "year": 2023,
+    "month": 6,
+    "category": "Entertainment",
+    "total_amount": 55
+  },
+  {
+    "year": 2023,
+    "month": 6,
+    "category": "Groceries",
+    "total_amount": 285
+  },
+  {
+    "year": 2023,
+    "month": 6,
+    "category": "Shopping",
+    "total_amount": 120
+  },
+  {
+    "year": 2023,
+    "month": 6,
+    "category": "Transportation",
+    "total_amount": 60
+  }
+]
