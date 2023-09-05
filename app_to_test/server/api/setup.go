@@ -25,10 +25,12 @@ func NewSetup() (*Setup, error) {
 	}
 	apiAddress := fmt.Sprintf(":%s", port)
 
+	expenseRepo := NewExpenseRepo(db)
+
 	mux := http.NewServeMux()
-	mux.HandleFunc("/expenses/add", addExpenseHandler(db))
-	mux.HandleFunc("/expenses/all", getExpensesHandler(db))
-	mux.HandleFunc("/expenses/summarize", summarizeExpensesHandler(db))
+	mux.HandleFunc("/expenses/add", addExpenseHandler(expenseRepo))
+	mux.HandleFunc("/expenses/all", getExpensesHandler(expenseRepo))
+	mux.HandleFunc("/expenses/summarize", summarizeExpensesHandler(expenseRepo))
 
 	return &Setup{
 		DB:         db,

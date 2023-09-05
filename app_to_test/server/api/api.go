@@ -1,21 +1,14 @@
 package api
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log/slog"
 	"net/http"
 )
 
-type Expense struct {
-	ID       string  `json:"id"`
-	Amount   float64 `json:"amount"`
-	Category string  `json:"category"`
-	Date     string  `json:"date"`
-	Notes    string  `json:"notes"`
-}
+// This project is not about unit tests, so we're not doing interfaces :)
 
-func addExpenseHandler(db *sql.DB) http.HandlerFunc {
+func addExpenseHandler(expenseRepo *ExpenseRepo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -29,11 +22,7 @@ func addExpenseHandler(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		insertQuery := `
-			INSERT INTO expenses (id, amount, category, date, notes)
-			VALUES ($1, $2, $3, $4, $5)
-		`
-		_, err = db.Exec(insertQuery, expense.ID, expense.Amount, expense.Category, expense.Date, expense.Notes)
+		err = expenseRepo.Add(expense)
 		if err != nil {
 			internalError(w, err, "could not create expense")
 			return
@@ -43,29 +32,17 @@ func addExpenseHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func getExpensesHandler(db *sql.DB) http.HandlerFunc {
+func getExpensesHandler(expenseRepo *ExpenseRepo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 
-		rows, err := db.Query("SELECT id, amount, category, date, notes FROM expenses")
+		expenses, err := expenseRepo.All()
 		if err != nil {
-			internalError(w, err, "could not query expenses")
+			internalError(w, err, "could not get expenses")
 			return
-		}
-		defer rows.Close()
-
-		expenses := make([]Expense, 0)
-		for rows.Next() {
-			var expense Expense
-			err := rows.Scan(&expense.ID, &expense.Amount, &expense.Category, &expense.Date, &expense.Notes)
-			if err != nil {
-				internalError(w, err, "could not scan expense")
-				return
-			}
-			expenses = append(expenses, expense)
 		}
 
 		err = json.NewEncoder(w).Encode(expenses)
@@ -76,47 +53,17 @@ func getExpensesHandler(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func summarizeExpensesHandler(db *sql.DB) http.HandlerFunc {
+func summarizeExpensesHandler(expenseRepo *ExpenseRepo) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 
-		query := `
-			SELECT
-			    EXTRACT(YEAR FROM date) AS year, 
-			    EXTRACT(MONTH FROM date) AS month, 
-			    category, 
-			    SUM(amount) AS total_amount
-			FROM expenses
-			GROUP BY year, month, category
-			ORDER BY year, month, category
-		`
-
-		rows, err := db.Query(query)
+		expenseSums, err := expenseRepo.Summarize()
 		if err != nil {
-			internalError(w, err, "could not query expense summary")
+			internalError(w, err, "could not get expense summary")
 			return
-		}
-		defer rows.Close()
-
-		type ExpenseSum struct {
-			Year        int     `json:"year"`
-			Month       int     `json:"month"`
-			Category    string  `json:"category"`
-			TotalAmount float64 `json:"total_amount"`
-		}
-
-		expenseSums := make([]ExpenseSum, 0)
-		for rows.Next() {
-			var expenseSum ExpenseSum
-			err := rows.Scan(&expenseSum.Year, &expenseSum.Month, &expenseSum.Category, &expenseSum.TotalAmount)
-			if err != nil {
-				internalError(w, err, "could not scan expense summary row")
-				return
-			}
-			expenseSums = append(expenseSums, expenseSum)
 		}
 
 		err = json.NewEncoder(w).Encode(expenseSums)
