@@ -1,5 +1,22 @@
 version: "3.9"
 services:
+  server:
+    image: "expense_tracker/server:latest"
+    build:
+      context: ./..
+      dockerfile: app_to_test/server/Dockerfile
+    environment:
+      DB_URL: "postgres://postgres:secret123@db:5432/expense_tracker?sslmode=disable"
+      BANK_API_URL: "${BANK_API_URL}"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+    ports:
+      # Once again, we use a random port to avoid conflicts.
+      - "8000"
+
   db:
     image: "postgres:15.2-alpine"
     environment:
@@ -12,16 +29,16 @@ services:
       timeout: 60s
       retries: 10
       start_period: 5s
-    ports:
-      # Random port to avoid collision. Helpful in CI!
-      - "5432"
 
   migrate:
     image: "expense_tracker/migrate:latest"
     build:
-      context: ../app_to_test/db
+      context: ./../app_to_test/db
     environment:
       DB_URL: "postgres://postgres:secret123@db:5432/expense_tracker?sslmode=disable"
     depends_on:
       db:
         condition: service_healthy
+
+networks:
+  default:

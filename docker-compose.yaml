@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   server:
+    image: "expense_tracker/server:latest"
     build:
       dockerfile: app_to_test/server/Dockerfile
     environment:
@@ -32,6 +33,7 @@ services:
       - "5432:5432"
 
   migrate:
+    image: "expense_tracker/migrate:latest"
     build:
       context: app_to_test/db
     environment:
@@ -41,6 +43,7 @@ services:
         condition: service_healthy
 
   bank-api:
+    image: "expense_tracker/bank_api:latest"
     build:
       context: ./bank_api
     networks:
