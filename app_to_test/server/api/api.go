@@ -2,8 +2,12 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
+
+	"github.com/antosdaniel/go-presentation-beyond-unit-tests/app_to_test/server/bank"
 )
 
 // This project is not about unit tests, so we're not doing interfaces :)
@@ -82,7 +86,51 @@ func summarizeExpensesHandler(expenseRepo *ExpenseRepo) http.HandlerFunc {
 	}
 }
 
+func syncFromBankHandler(expenseRepo *ExpenseRepo, bankAPI *bank.API) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		bankTransactions, err := bankAPI.GetTransactions()
+		if err != nil {
+			internalError(w, err, "could not retrieve bank transactions")
+			return
+		}
+
+		synced := 0
+		for _, transaction := range bankTransactions {
+			if transaction.Category == "" {
+				continue
+			}
+			expense := Expense{
+				ID:       transaction.ID,
+				Amount:   transaction.Amount,
+				Category: transaction.Category,
+				Date:     transaction.CreatedAt,
+				Notes:    "Synced from Bank API",
+			}
+
+			err := expenseRepo.Add(expense)
+			if expenseAlreadyExists(err) {
+				continue
+			}
+			if err != nil {
+				internalError(w, err, "could not create expense from bank transaction")
+				return
+			}
+			synced++
+		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(fmt.Sprintf(`{"synced": %d}`, synced)))
+	}
+}
+
 func internalError(w http.ResponseWriter, err error, msg string) {
 	slog.With(slog.String("error", err.Error())).Error(msg)
 	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func expenseAlreadyExists(err error) bool {
+	if err == nil {
+		return false
+	}
+	return strings.Contains(err.Error(), `duplicate key value violates unique constraint "expenses_pkey"`)
 }

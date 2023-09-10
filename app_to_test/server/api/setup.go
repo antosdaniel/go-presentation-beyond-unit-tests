@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+
+	"github.com/antosdaniel/go-presentation-beyond-unit-tests/app_to_test/server/bank"
 )
 
 type Setup struct {
@@ -27,10 +29,13 @@ func NewSetup() (*Setup, error) {
 
 	expenseRepo := NewExpenseRepo(db)
 
+	bankAPI := bank.New(os.Getenv("BANK_API_URL"))
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/expenses/add", addExpenseHandler(expenseRepo))
 	mux.HandleFunc("/expenses/all", getExpensesHandler(expenseRepo))
 	mux.HandleFunc("/expenses/summarize", summarizeExpensesHandler(expenseRepo))
+	mux.HandleFunc("/expenses/sync", syncFromBankHandler(expenseRepo, bankAPI))
 
 	return &Setup{
 		DB:         db,

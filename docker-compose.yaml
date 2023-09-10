@@ -5,9 +5,12 @@ services:
       dockerfile: app_to_test/server/Dockerfile
     environment:
       DB_URL: "postgres://postgres:secret123@db:5432/expense_tracker?sslmode=disable"
+      BANK_API_URL: "http://bank-api:8000"
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - default
     ports:
       - "8000:8000"
     volumes:
@@ -36,3 +39,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  bank-api:
+    build:
+      context: ./bank_api
+    networks:
+      - default
+
+networks:
+  default:

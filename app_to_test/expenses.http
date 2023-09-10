@@ -20,3 +20,8 @@ GET http://localhost:8000/expenses/summarize
 Accept: application/json
 
 ###
+
+GET http://localhost:8000/expenses/sync
+Accept: application/json
+
+###
