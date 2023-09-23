@@ -13,8 +13,17 @@ jobs:
         with:
           go-version: '1.21'
 
-      - name: Build
-        run: go build -v ./...
+      - name: Build server
+        run: docker build -f ./app_to_test/server/Dockerfile -t expense_tracker/server:latest .
 
-      - name: Test
+      - name: Build migrate
+        run: docker build -t expense_tracker/migrate:latest ./app_to_test/db
+
+      - name: Tests
         run: go test -v ./...
+
+      - name: E2E Tests
+        run: |
+          # Run only e2e tests
+          PKGS=$(git grep --files-with-matches "//go:build e2e_tests" -- "*.go" | xargs dirname | sed 's,^,./,g' | sort -u)
+          go test -tags=e2e_tests $PKGS

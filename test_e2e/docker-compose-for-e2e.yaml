@@ -1,4 +1,5 @@
 version: "3.9"
+
 services:
   server:
     image: "expense_tracker/server:latest"
@@ -11,8 +12,9 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - default
+    # Thanks to this container can call our mock HTTP server on host machine.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       # Once again, we use a random port to avoid conflicts.
       - "8000"
@@ -39,6 +41,3 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-networks:
-  default:

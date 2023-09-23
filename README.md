@@ -33,3 +33,18 @@ of your application work as expected. These could also be named smoke tests.
 ```shell
 docker compose up
 ```
+
+## Run tests
+
+Run unit tests:
+
+```shell
+go test ./...
+```
+
+Run e2e tests:
+
+```shell
+PKGS=$(git grep --files-with-matches "//go:build e2e_tests" -- "*.go" | xargs dirname | sed 's,^,./,g' | sort -u)
+go test -tags=e2e_tests $PKGS
+```
