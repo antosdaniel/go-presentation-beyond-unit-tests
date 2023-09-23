@@ -1,6 +1,8 @@
-# Go presentation: Beyond unit tests
+# Go presentation: Beyond unit tests [![Go](https://github.com/antosdaniel/go-presentation-beyond-unit-tests/actions/workflows/go.yaml/badge.svg)](https://github.com/antosdaniel/go-presentation-beyond-unit-tests/actions)
 
 A dive into integration and end-to-end testing in Go.
+
+[Presentation](https://slides.com/antosdaniel/beyond-unit-tests)
 
 ## Walkthrough
 
