@@ -2,7 +2,9 @@
 
 A dive into integration and end-to-end testing in Go.
 
-[Presentation](https://slides.com/antosdaniel/beyond-unit-tests)
+[Slides](https://slides.com/antosdaniel/beyond-unit-tests)
+
+[Presentation at Poznań Go Devs #9](https://www.youtube.com/watch?v=_Z21rm0FS_E)
 
 ## Walkthrough
 
